@@ -195,27 +195,44 @@ std::size_t COpenStreetMap::NodeCount() const noexcept {
     return DImplementation->DNodesById.size(); 
 }
 
-// Returns the total number of ways stored in the ma, stored in DWaysById
+// Returns the total number of ways stored in the map, stored in DWaysById
 std::size_t COpenStreetMap::WayCount() const noexcept {
     return DImplementation->DWaysById.size(); 
 }
 
 // Retrieves a shared pointer to the node at the specified index; returns nullptr if index is invalid
 std::shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByIndex(std::size_t index) const noexcept {
-    return nullptr; // Placeholder
+    if (index >= DImplementation->DNodesOrdered.size()) {
+        return nullptr;
+    }
+    return DImplementation->DNodesOrdered[index];
 }
 
 // Retrieves a shared pointer to the node with the specified ID; returns nullptr if ID doesn't exist
 std::shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByID(TNodeID id) const noexcept {
-    return nullptr; // Placeholder
+    auto it = DImplementation->DNodesById.find(id);
+    if (it != DImplementation->DNodesById.end()) {
+        return nullptr;
+    }
+    else {
+        return it->second;
+    }
 }
-
 // Retrieves a shared pointer to the way at the specified index; returns nullptr if index is invalid
 std::shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByIndex(std::size_t index) const noexcept {
-    return nullptr; // Placeholder
+    if (index >= DImplementation->DWaysOrdered.size()) {
+        return nullptr;
+    }
+    return DImplementation->DWaysOrdered[index];
 }
 
 // Retrieves a shared pointer to the way with the specified ID; returns nullptr if ID doesn't exist
 std::shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByID(TWayID id) const noexcept {
-    return nullptr; // Placeholder
+    auto it = DImplementation->DWaysById.find(id);
+    if (it != DImplementation->DWaysById.end()) {
+        return nullptr;
+    }
+    else {
+        return it->second;
+    }
 }
