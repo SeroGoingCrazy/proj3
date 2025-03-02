@@ -9,7 +9,7 @@ struct CCSVBusSystem:: SImplementation {
     // stop {stop_id,node_id 22043,2849810514}
     struct Stop: CBusSystem::SStop{
         TStopID DStopId;
-        CStreetMap::TNodeID DNodeId;
+        CStreetMap::TNodeID DNodeId; // stop occur in mutiple routes 
 
         Stop(TStopID stopId, CStreetMap::TNodeID nodeId)
             : DStopId(stopId), DNodeId(nodeId) {}
@@ -77,7 +77,7 @@ CCSVBusSystem::CCSVBusSystem(std::shared_ptr<CDSVReader> stopsrc, std::shared_pt
     while (routesrc->ReadRow(row)) {
         if (row.size() >= 2) {
             std::string routeName = row[0];
-            TStopID stopId = std::stoull(row[1]);
+            TStopID stopId = std::stoull(row[1]); // TODO throw exception if invalid stop
             stop_per_route[routeName].push_back(stopId);
         }
     }

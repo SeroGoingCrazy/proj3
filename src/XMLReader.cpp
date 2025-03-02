@@ -51,6 +51,10 @@ struct CXMLReader::SImplementation {
             if (XML_Parse(DParser, Buffer.data(), static_cast<int>(rsize), 0) == XML_STATUS_ERROR) {
                 throw std::runtime_error(XML_ErrorString(XML_GetErrorCode(DParser)));
             }
+            
+            if (DSource->End()) {
+                ifend = true;
+            }
         }
 
         // Return the next entity (skip character data if requested)

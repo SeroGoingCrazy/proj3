@@ -46,6 +46,7 @@ struct CXMLWriter::SImplementation {
         return false; // prevent extra indent
     }
 
+
     bool FlushPending() {
         if (!pendingStack.empty() && !pendingStack.back().flushed) {
             PendingElement &pe = pendingStack.back();
