@@ -21,7 +21,7 @@ INC_DIRS = ./include /opt/homebrew/opt/expat/include $(shell find $(SRC_DIR) $(T
 
 .PHONY: all clean test
 
-all: $(BIN_DIR)/teststrdatasource $(BIN_DIR)/teststrdatasink $(BIN_DIR)/testbussystem $(BIN_DIR)/testosm
+all: $(BIN_DIR)/teststrdatasource $(BIN_DIR)/teststrdatasink $(BIN_DIR)/testbussystem $(BIN_DIR)/testosm $(BIN_DIR)/teststrutils
 
 $(OBJ_DIR) $(BIN_DIR):
 	mkdir -p $@
@@ -44,11 +44,15 @@ $(BIN_DIR)/testbussystem: $(OBJ_DIR)/CSVBusSystem.o $(OBJ_DIR)/DSVReader.o $(OBJ
 $(BIN_DIR)/testosm: $(OBJ_DIR)/OpenStreetMap.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/TestOpenStreetMap.o  $(OBJ_DIR)/StringUtils.o| $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
+$(BIN_DIR)/teststrutils: $(OBJ_DIR)/StringUtils.o $(OBJ_DIR)/StringUtilsTest.o | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
 test: all
 	@$(BIN_DIR)/teststrdatasource
 	@$(BIN_DIR)/teststrdatasink
 	@$(BIN_DIR)/testbussystem
 	@$(BIN_DIR)/testosm
+	@$(BIN_DIR)/teststrutils
 	
 
 clean:

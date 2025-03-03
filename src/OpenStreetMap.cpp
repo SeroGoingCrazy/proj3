@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <stdexcept>
 
 // Define the private implementation struct for PIMPL idiom
 struct COpenStreetMap::SImplementation {
