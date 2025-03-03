@@ -135,11 +135,8 @@ COpenStreetMap::COpenStreetMap(std::shared_ptr<CXMLReader> src) {
     DImplementation = std::make_unique<SImplementation>();
     SXMLEntity entity;
 
-    while (!src->End()) {
-        if (src->ReadEntity(entity, true)) {
-            continue;
-        } // osm doesn't have char data
-
+    // process entities when ReadEnity() returns true 
+    while (src->ReadEntity(entity, true)) {
         if (entity.DType == SXMLEntity::EType::StartElement) {
             // handle Node case
             if (entity.DNameData == "node") {
@@ -149,7 +146,6 @@ COpenStreetMap::COpenStreetMap(std::shared_ptr<CXMLReader> src) {
                 std::vector<std::pair<std::string, std::string>> attrs;
 
                 // read the Node Elements (tag)
-                // k: catetgory v:specific value, ex: <tag k="highway" v="unclassified"/>
                 while (src->ReadEntity(entity, true) && 
                        !(entity.DType == SXMLEntity::EType::EndElement && entity.DNameData == "node")) {
                     if (entity.DType == SXMLEntity::EType::StartElement && entity.DNameData == "tag") {
@@ -166,7 +162,7 @@ COpenStreetMap::COpenStreetMap(std::shared_ptr<CXMLReader> src) {
                 TWayID id = std::stoull(entity.AttributeValue("id"));
                 std::vector<TNodeID> nodeIds;
                 std::vector<std::pair<std::string, std::string>> attrs; 
-                // read the Way elements. Ref: reference to the node 
+                // read the Way elements
                 while (src->ReadEntity(entity, true) && 
                        !(entity.DType == SXMLEntity::EType::EndElement && entity.DNameData == "way")) {
                     if (entity.DType == SXMLEntity::EType::StartElement) {
@@ -212,10 +208,9 @@ std::shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByIndex(std::size_t index
 std::shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByID(TNodeID id) const noexcept {
     auto it = DImplementation->DNodesById.find(id);
     if (it != DImplementation->DNodesById.end()) {
-        return nullptr;
-    }
-    else {
         return it->second;
+    } else {
+        return nullptr;
     }
 }
 // Retrieves a shared pointer to the way at the specified index; returns nullptr if index is invalid
@@ -230,9 +225,8 @@ std::shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByIndex(std::size_t index) 
 std::shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByID(TWayID id) const noexcept {
     auto it = DImplementation->DWaysById.find(id);
     if (it != DImplementation->DWaysById.end()) {
-        return nullptr;
-    }
-    else {
         return it->second;
+    } else {
+        return nullptr;
     }
 }

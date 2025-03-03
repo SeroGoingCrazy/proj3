@@ -1,6 +1,6 @@
 #ifndef XMLREADER_H
 #define XMLREADER_H
-
+#include "StringUtils.h"
 #include <memory>
 #include "XMLEntity.h"
 #include "DataSource.h"

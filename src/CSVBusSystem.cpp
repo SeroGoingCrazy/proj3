@@ -63,12 +63,17 @@ CCSVBusSystem::CCSVBusSystem(std::shared_ptr<CDSVReader> stopsrc, std::shared_pt
 
     // parse stop CSV, expect stop_id, node_id
     while (stopsrc->ReadRow(row)) {
-        if (row.size() >= 2){
-            TStopID stopId = std::stoull(row[0]);
-            CStreetMap::TNodeID nodeId = std::stoull(row[1]);
-            auto stop = std::make_shared<SImplementation::Stop>(stopId, nodeId);
-            DImplementation->DStopsById[stopId] = stop;
-            DImplementation->DStopsOrdered.push_back(stop);
+        if (row.size() >= 2) {
+            try {
+                TStopID stopId = std::stoull(row[0]);
+                CStreetMap::TNodeID nodeId = std::stoull(row[1]);
+                auto stop = std::make_shared<SImplementation::Stop>(stopId, nodeId);
+                DImplementation->DStopsById[stopId] = stop;
+                DImplementation->DStopsOrdered.push_back(stop);
+            } catch (const std::invalid_argument& e) {
+                // Skip this row for header and invalid input
+                continue;
+            }
         }
     }
 
@@ -76,9 +81,15 @@ CCSVBusSystem::CCSVBusSystem(std::shared_ptr<CDSVReader> stopsrc, std::shared_pt
     std::map<std::string, std::vector<TStopID>> stop_per_route;
     while (routesrc->ReadRow(row)) {
         if (row.size() >= 2) {
-            std::string routeName = row[0];
-            TStopID stopId = std::stoull(row[1]); // TODO throw exception if invalid stop
-            stop_per_route[routeName].push_back(stopId);
+            try {
+                std::string routeName = row[0];
+                TStopID stopId = std::stoull(row[1]); 
+                stop_per_route[routeName].push_back(stopId);
+            }
+            catch (const std::invalid_argument& e) { 
+                continue; 
+            }
+
         }
     }
 

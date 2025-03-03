@@ -21,10 +21,10 @@ INC_DIRS = ./include /opt/homebrew/opt/expat/include $(shell find $(SRC_DIR) $(T
 
 .PHONY: all clean test
 
-all: $(BIN_DIR)/teststrdatasource $(BIN_DIR)/teststrdatasink
+all: $(BIN_DIR)/teststrdatasource $(BIN_DIR)/teststrdatasink $(BIN_DIR)/testbussystem $(BIN_DIR)/testosm
 
 $(OBJ_DIR) $(BIN_DIR):
-	mkdir -p $(@D)
+	mkdir -p $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
@@ -38,9 +38,18 @@ $(BIN_DIR)/teststrdatasource: $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/StringDat
 $(BIN_DIR)/teststrdatasink: $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/StringDataSinkTest.o $(OBJ_DIR)/StringUtils.o | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
+$(BIN_DIR)/testbussystem: $(OBJ_DIR)/CSVBusSystem.o $(OBJ_DIR)/DSVReader.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/TestBusSystem.o | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+$(BIN_DIR)/testosm: $(OBJ_DIR)/OpenStreetMap.o $(OBJ_DIR)/XMLReader.o $(OBJ_DIR)/StringDataSource.o $(OBJ_DIR)/TestOpenStreetMap.o  $(OBJ_DIR)/StringUtils.o| $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
 test: all
 	@$(BIN_DIR)/teststrdatasource
 	@$(BIN_DIR)/teststrdatasink
+	@$(BIN_DIR)/testbussystem
+	@$(BIN_DIR)/testosm
+	
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
